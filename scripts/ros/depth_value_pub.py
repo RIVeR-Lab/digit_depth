@@ -1,11 +1,12 @@
+#!/usr/bin/env python3
 """
     By default, depth image measures the distance from the camera to the gel surface in meters.
     When the gel is not deformed, the depth value is max depth.When the gel is deformed, this value gets smaller.
     This node publishes the difference betweeb min depth (max deformation) and background depth value(min deformation)
     Note that we multiply by 1000 to convert from meters to millimeters.
 """
-import hydra
 import rospy
+import rospkg
 from pathlib import Path
 from std_msgs.msg import Float32
 

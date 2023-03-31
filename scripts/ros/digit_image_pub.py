@@ -1,13 +1,14 @@
-""" ROS RGB image publisher for DIGIT sensor """
+#!/usr/bin/env python3
 
-import hydra
+""" ROS RGB image publisher for DIGIT sensor """
+import os
+import rospkg
+import yaml
 from cv_bridge import CvBridge
 from pathlib import Path
 import rospy
 from sensor_msgs.msg import CompressedImage
 from digit_depth.digit.digit_sensor import DigitSensor
-
-base_path = Path(__file__).parent.parent.parent.resolve()
 
 
 class ImageFeature:
@@ -16,9 +17,13 @@ class ImageFeature:
                                          CompressedImage, queue_size=10)
         self.br = CvBridge()
 
-@hydra.main(config_path=base_path / "config", config_name="digit.yaml")
-def rgb_pub(cfg):
-    digit_sensor = DigitSensor(cfg.sensor.fps, "QVGA", cfg.sensor.serial_num)
+def rgb_pub():
+    ros_pack = rospkg.RosPack()
+    # Read yaml data
+    with open(os.path.join(ros_pack.get_path('digit_depth'),'config','digit.yaml')) as f:
+        cfg = yaml.safe_load(f)
+
+    digit_sensor = DigitSensor(cfg['sensor']['fps'], "QVGA", cfg['sensor']['serial_num'])
     ic = ImageFeature()
     rospy.init_node('image_feature', anonymous=True)
     digit_call = digit_sensor()
